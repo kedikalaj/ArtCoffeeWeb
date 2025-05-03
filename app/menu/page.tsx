@@ -4,9 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingBag, Coffee, Search, ArrowLeft } from "lucide-react"
+import { ShoppingBag, Coffee, Search, ArrowLeft, SlidersHorizontal } from "lucide-react"
 import { useCafe } from "@/context/cafe-context"
 import { mockCategories, mockProducts } from "@/lib/mock-data"
 import Image from "next/image"
@@ -63,59 +62,73 @@ export default function Menu() {
 
       {/* Main Content */}
       <main className="flex-1 p-4 max-w-lg mx-auto w-full">
-        {/* Search Bar */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search menu items..."
-            className="pl-10 bg-white border-amber-200 focus-visible:ring-amber-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        {/* Search + Filter */}
+        <div className="flex items-center mb-4 space-x-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search coffee"
+              className="pl-10 pr-3 bg-white border-amber-200 focus-visible:ring-amber-500 rounded-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.currentTarget.value)}
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="border-amber-200 text-amber-900 hover:bg-amber-100"
+            onClick={() => {
+              /* open filter modal or something */
+            }}
+          >
+            <SlidersHorizontal className="h-5 w-5" />
+          </Button>
         </div>
 
-        {/* Categories */}
-        <Tabs defaultValue="coffee" className="w-full" onValueChange={setActiveCategory}>
-          <TabsList className="bg-amber-100/50 p-1 mb-4 overflow-x-auto flex w-full justify-start">
-            {mockCategories.map((category) => (
-              <TabsTrigger
-                key={category.id}
-                value={category.id}
-                className="px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-amber-900 data-[state=active]:shadow-sm rounded-md"
+        {/* Category Pills */}
+        <div className="flex space-x-2 overflow-x-auto pb-2 mb-4">
+          {mockCategories.map((cat) => {
+            const isActive = cat.id === activeCategory
+            return (
+              <Button
+                key={cat.id}
+                size="sm"
+                variant={isActive ? "default" : "outline"}
+                className={`whitespace-nowrap rounded-full px-4 py-1 ${
+                  isActive ? "bg-amber-800 text-white" : "border-amber-300 text-amber-900"
+                }`}
+                onClick={() => setActiveCategory(cat.id)}
               >
-                {category.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+                {cat.name}
+              </Button>
+            )
+          })}
+        </div>
 
-          {mockCategories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="mt-0">
-              <div className="grid grid-cols-1 gap-4">
-                {filteredProducts.map((product) => (
-                  <Link href={`/product/${product.id}`} key={product.id}>
-                    <Card className="overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="flex h-24">
-                        <div className="relative w-24 h-full">
-                          <Image
-                            src={product.image || "/placeholder.svg?height=96&width=96"}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <CardContent className="p-3 flex-1 flex flex-col justify-center">
-                          <h3 className="font-medium text-amber-900">{product.name}</h3>
-                          <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
-                          <p className="font-bold text-amber-800 mt-1">${product.price.toFixed(2)}</p>
-                        </CardContent>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </TabsContent>
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 gap-4">
+          {filteredProducts.map((product) => (
+            <Link href={`/product/${product.id}`} key={product.id}>
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
+                <div className="flex h-24">
+                  <div className="relative w-24 h-full">
+                    <Image
+                      src={product.image || "/placeholder.svg?height=96&width=96"}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <CardContent className="p-3 flex-1 flex flex-col justify-center">
+                    <h3 className="font-medium text-amber-900">{product.name}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
+                    <p className="font-bold text-amber-800 mt-1">${product.price.toFixed(2)}</p>
+                  </CardContent>
+                </div>
+              </Card>
+            </Link>
           ))}
-        </Tabs>
+        </div>
       </main>
 
       {/* Bottom Navigation */}

@@ -1,24 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, QrCode, Utensils } from "lucide-react"
 import { MainLayout } from "@/components/main-layout"
 import { QRScanner } from "@/components/qr-scanner"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 export default function ScanTable() {
   const router = useRouter()
   const [isScanning, setIsScanning] = useState(false)
   const [tableNumber, setTableNumber] = useState<number | null>(null)
 
-  const handleScan = (data: string) => {
-    // Simulate QR code scan
-    setIsScanning(false)
 
-    // Extract table number from QR code data
-    // In a real app, this would parse the actual QR code data
+  const handleScan = (data: string) => {
+    setIsScanning(false)
     const mockTableNumber = Math.floor(Math.random() * 20) + 1
     setTableNumber(mockTableNumber)
   }
@@ -33,7 +31,7 @@ export default function ScanTable() {
         <Button variant="ghost" size="icon" onClick={() => router.push("/menu")} className="mr-2">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-bold text-amber-900">Scan Table</h1>
+        <h1 className="text-xl font-bold text-amber-900">Place Order</h1>
       </div>
 
       {!isScanning && tableNumber === null && (
@@ -57,14 +55,14 @@ export default function ScanTable() {
             <p className="text-sm text-muted-foreground mb-2">Or enter table number manually</p>
 
             <div className="grid grid-cols-4 gap-2 w-full">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+              {[...Array(12)].map((_, idx) => (
                 <Button
-                  key={num}
+                  key={idx + 1}
                   variant="outline"
                   className="border-amber-800 text-amber-800 hover:bg-amber-100"
-                  onClick={() => handleManualEntry(num)}
+                  onClick={() => handleManualEntry(idx + 1)}
                 >
-                  {num}
+                  {idx + 1}
                 </Button>
               ))}
             </div>
@@ -102,6 +100,11 @@ export default function ScanTable() {
           </Button>
         </div>
       )}
+
+      {/* Add bottom navigation */}
+      <div className="fixed bottom-0 left-0 w-full">
+        <BottomNavigation activeItem="scan" />
+      </div>
     </MainLayout>
   )
 }
