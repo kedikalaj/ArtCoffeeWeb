@@ -25,7 +25,7 @@ export default function Menu() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await fetch("http://localhost:5001/api/categories/")
+        const res = await fetch("http://192.168.170.205:5001/api/categories/")
         if (!res.ok) throw new Error("Failed to fetch categories")
         const data = await res.json()
         setCategories(data)
@@ -43,7 +43,7 @@ export default function Menu() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("http://localhost:5001/api/products/")
+        const res = await fetch("http://192.168.170.205:5001/api/products/")
         if (!res.ok) throw new Error("Failed to fetch products")
         const data = await res.json()
         setProducts(data)

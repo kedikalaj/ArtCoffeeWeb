@@ -26,7 +26,7 @@ export default function Login() {
     setError("")
 
     try {
-      const response = await axios.post("http://localhost:5001/api/auth/login", {
+      const response = await axios.post("http://192.168.170.205:5001/api/auth/login", {
         email,
         password
       })

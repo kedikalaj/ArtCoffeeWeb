@@ -77,13 +77,13 @@ const mockContextualSuggestions = [
     productId: "cold-brew", // Keep using slugs or IDs as needed for linking
     productName: "Iced Cold Brew",
     description: "Perfectly brewed for a hot day.",
-    imageUrl: "/images/coldbrew.png", // Use relative paths for mock/static images
+    imageUrl: "https://frostingandfettuccine.com/wp-content/uploads/2022/12/Caramel-Iced-Coffee-6.jpg", // Use relative paths for mock/static images
   },
   {
     productId: "strawberry-lemonade",
     productName: "Strawberry Lemonade",
     description: "Refreshing and sweet.",
-    imageUrl: "/images/lemonade.png",
+    imageUrl: "https://tastesbetterfromscratch.com/wp-content/uploads/2019/03/Strawberry-Lemonade-8.jpg",
   },
 ]
 

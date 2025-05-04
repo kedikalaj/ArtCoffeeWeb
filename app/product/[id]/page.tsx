@@ -60,7 +60,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     async function fetchProduct() {
       // Fetch logic remains the same
        try {
-        const res = await fetch(`http://localhost:5001/api/products/${params.id}`)
+        const res = await fetch(`http://192.168.170.205:5001/api/products/${params.id}`)
         if (!res.ok) throw new Error("Failed to fetch product")
         const data: Product = await res.json()
         setProduct(data)
