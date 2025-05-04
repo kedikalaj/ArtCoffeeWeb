@@ -1,19 +1,15 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
 interface User {
-  id: string
-  name: string
+  id: number
   email: string
-  loyaltyPoints: number
-  favorites: string[]
-  giftCards: {
-    id: string
-    amount: number
-    from: string
-    message: string
-  }[]
+  name: string
+  role: string
+  beanBalance: number
+  createdAt: string
+  updatedAt: string
 }
 
 interface CartItem {
@@ -22,6 +18,7 @@ interface CartItem {
   price: number
   image?: string
   quantity: number
+  notes?: string
   customizations?: {
     size?: string
     milk?: string
@@ -32,23 +29,43 @@ interface CartItem {
 interface Cart {
   items: CartItem[]
 }
-
+type OrderType = "dine-in" | "takeout" | null
 interface CafeContextType {
   user: User | null
   setUser: (user: User | null) => void
+  token: string | null
+  setToken: (token: string | null) => void
   cart: Cart
   addToCart: (item: CartItem) => void
   updateCartItemQuantity: (item: CartItem, quantity: number) => void
   removeFromCart: (item: CartItem) => void
   clearCart: () => void
   logout: () => void
+  orderType: OrderType
+  setOrderType: (type: OrderType) => void
+  tableNumber: number | null
+  setTableNumber: (table: number | null) => void
 }
 
 const CafeContext = createContext<CafeContextType | undefined>(undefined)
 
 export function CafeProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string | null>(null)
   const [cart, setCart] = useState<Cart>({ items: [] })
+
+  const [orderType, setOrderType] = useState<OrderType>(null)
+  const [tableNumber, setTableNumber] = useState<number | null>(null)
+
+  // Initialize from localStorage on mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token")
+    const storedUser = localStorage.getItem("user")
+    if (storedToken && storedUser) {
+      setToken(storedToken)
+      setUser(JSON.parse(storedUser))
+    }
+  }, [])
 
   const addToCart = (item: CartItem) => {
     setCart((prevCart) => {
@@ -103,8 +120,10 @@ export function CafeProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null)
+    setToken(null)
     clearCart()
-    localStorage.removeItem("isLoggedIn")
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
   }
 
   return (
@@ -112,12 +131,18 @@ export function CafeProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         setUser,
+        token,
+        setToken,
         cart,
         addToCart,
         updateCartItemQuantity,
         removeFromCart,
         clearCart,
         logout,
+        orderType,
+        setOrderType,
+        tableNumber,
+        setTableNumber,
       }}
     >
       {children}

@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ShoppingBag, Coffee, Search, ArrowLeft, SlidersHorizontal } from "lucide-react"
 import { useCafe } from "@/context/cafe-context"
-import { mockCategories, mockProducts } from "@/lib/mock-data"
 import Image from "next/image"
 import Link from "next/link"
 import { BottomNavigation } from "@/components/bottom-navigation"
@@ -16,21 +15,59 @@ import { Input } from "@/components/ui/input"
 export default function Menu() {
   const router = useRouter()
   const { cart, user } = useCafe()
-  const [activeCategory, setActiveCategory] = useState("coffee")
-  const [products, setProducts] = useState(mockProducts.filter((p) => p.category === "coffee"))
+
+  const [categories, setCategories] = useState<any[]>([])
+  const [activeCategory, setActiveCategory] = useState<number | null>(null)
+  const [products, setProducts] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
+  // Fetch categories from API
   useEffect(() => {
-    setProducts(mockProducts.filter((p) => p.category === activeCategory))
-  }, [activeCategory])
+    async function fetchCategories() {
+      try {
+        const res = await fetch("http://localhost:5001/api/categories/")
+        if (!res.ok) throw new Error("Failed to fetch categories")
+        const data = await res.json()
+        setCategories(data)
+        if (data.length && !activeCategory) {
+          setActiveCategory(data[0].id)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
+  // Fetch products from API
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("http://localhost:5001/api/products/")
+        if (!res.ok) throw new Error("Failed to fetch products")
+        const data = await res.json()
+        setProducts(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchProducts()
+  }, [])
+
+  // Filter products by active category
+  const productsInCategory =
+    activeCategory !== null
+      ? products.filter((p) => p.categoryId === activeCategory)
+      : []
+
+  // Apply search filter
   const filteredProducts = searchQuery
-    ? products.filter(
+    ? productsInCategory.filter(
         (p) =>
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.description.toLowerCase().includes(searchQuery.toLowerCase()),
       )
-    : products
+    : productsInCategory
 
   return (
     <div className="flex flex-col min-h-screen bg-amber-50">
@@ -44,7 +81,7 @@ export default function Menu() {
             <h1 className="text-xl font-semibold text-amber-900">Menu</h1>
           </div>
           <div className="flex items-center">
-            <Button variant="ghost" size="icon" className="relative mr-2" onClick={() => router.push("/cart")}>
+            <Button variant="ghost" size="icon" className="relative mr-2" onClick={() => router.push("/cart")}> 
               <ShoppingBag className="h-5 w-5 text-amber-900" />
               {cart.items.length > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-amber-800">
@@ -54,7 +91,7 @@ export default function Menu() {
             </Button>
             <div className="bg-amber-100 rounded-full px-3 py-1 text-sm font-medium text-amber-800 flex items-center">
               <Coffee className="h-4 w-4 mr-1" />
-              {user?.loyaltyPoints || 0} Beans
+              {user?.beanBalance || 0} Beans
             </div>
           </div>
         </div>
@@ -67,7 +104,7 @@ export default function Menu() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search coffee"
+              placeholder="Search items"
               className="pl-10 pr-3 bg-white border-amber-200 focus-visible:ring-amber-500 rounded-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.currentTarget.value)}
@@ -87,7 +124,7 @@ export default function Menu() {
 
         {/* Category Pills */}
         <div className="flex space-x-2 overflow-x-auto pb-2 mb-4">
-          {mockCategories.map((cat) => {
+          {categories.map((cat) => {
             const isActive = cat.id === activeCategory
             return (
               <Button
@@ -113,7 +150,7 @@ export default function Menu() {
                 <div className="flex h-24">
                   <div className="relative w-24 h-full">
                     <Image
-                      src={product.image || "/placeholder.svg?height=96&width=96"}
+                      src={product.imageUrl || "/placeholder.svg?height=96&width=96"}
                       alt={product.name}
                       fill
                       className="object-cover"
@@ -122,7 +159,7 @@ export default function Menu() {
                   <CardContent className="p-3 flex-1 flex flex-col justify-center">
                     <h3 className="font-medium text-amber-900">{product.name}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
-                    <p className="font-bold text-amber-800 mt-1">${product.price.toFixed(2)}</p>
+                    <p className="font-bold text-amber-800 mt-1">${product.basePrice.toFixed(2)}</p>
                   </CardContent>
                 </div>
               </Card>

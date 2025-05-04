@@ -20,7 +20,7 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("card")
   const [isProcessing, setIsProcessing] = useState(false)
   const [showPayItForward, setShowPayItForward] = useState(false)
-
+  console.log(cart)
   const subtotal = cart.items.reduce((total, item) => {
     return total + item.price * item.quantity
   }, 0)

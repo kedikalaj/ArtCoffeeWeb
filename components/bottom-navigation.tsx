@@ -13,7 +13,6 @@ export function BottomNavigation({ activeItem }: BottomNavigationProps) {
 
   const navItems = [
     { key: "home", icon: Home, label: "Home", path: "/home" },
-    { key: "menu", icon: Coffee, label: "Menu", path: "/menu" },
     { key: "scan", icon: Shell, label: "Order", path: "/scan-table" },
     { key: "gift", icon: Gift, label: "Gift", path: "/gift-card" },
     { key: "profile", icon: User, label: "Profile", path: "/profile" },

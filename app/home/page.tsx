@@ -26,13 +26,13 @@ const mockHomeData = {
     ],
     contextual: [
       {
-        productId: "PROD005",
+        productId: "cappuccino",
         productName: "Iced Cold Brew",
         description: "Perfectly brewed for a hot day.",
         imageUrl: "/images/coldbrew.png",
       },
       {
-        productId: "PROD010",
+        productId: "latte",
         productName: "Strawberry Lemonade",
         description: "Refreshing and sweet.",
         imageUrl: "/images/lemonade.png",
@@ -64,7 +64,7 @@ export default function HomePage() {
           <div className="flex items-center">
             <div className="bg-amber-100 rounded-full px-3 py-1 text-sm font-medium text-amber-800 flex items-center">
               <Coffee className="h-4 w-4 mr-1" />
-              {user?.loyaltyPoints || data.beanBalance} Beans
+              {user?.beanBalance} Beans
             </div>
           </div>
         </div>
